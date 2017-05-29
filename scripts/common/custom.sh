@@ -16,7 +16,7 @@ AWS_CLI_BUNDLE=awscli-bundle
 AWS_CLI_BUNDLE_FILE=$AWS_CLI_BUNDLE.zip
 curl -O https://s3.amazonaws.com/aws-cli/$AWS_CLI_BUNDLE_FILE
 unzip $AWS_CLI_BUNDLE_FILE
-sudo ./$AWS_CLI_BUNDLE/install -i /usr/local/aws -b /usr/local/bin/aws
+./$AWS_CLI_BUNDLE/install -i /usr/local/aws -b /usr/local/bin/aws
 rm -rf $AWS_CLI_BUNDLE
 rm $AWS_CLI_BUNDLE_FILE
 
@@ -29,7 +29,7 @@ yum -y install httpd
 # Install Page speed
 ps_repo=/etc/yum.repos.d/mod-pagespeed.repo
 if [ ! -f $ps_repo ]; then
-  sudo touch /etc/yum.repos.d/mod-pagespeed.repo
+  touch /etc/yum.repos.d/mod-pagespeed.repo
   echo "[mod-pagespeed]" > $ps_repo
   echo "name=mod-pagespeed" >> $ps_repo
   echo "baseurl=http://dl.google.com/linux/mod-pagespeed/rpm/stable/x86_64" >> $ps_repo

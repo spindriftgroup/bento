@@ -1,0 +1,393 @@
+{
+  "builders": [
+    {
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `ks_path`}}<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": "{{user `disk_size`}}",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_os_type": "Oracle_64",
+      "hard_drive_interface": "sata",
+      "headless": "{{ user `headless` }}",
+      "http_directory": "http",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `mirror`}}/{{user `mirror_directory`}}/{{user `iso_name`}}",
+      "output_directory": "packer-{{user `template`}}-virtualbox",
+      "shutdown_command": "echo 'vagrant' | sudo -S /sbin/halt -h -p",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{ user `memory` }}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{ user `cpus` }}"
+        ]
+      ],
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "{{ user `template` }}"
+    }
+  ],
+  "post-processors": [
+    {
+      "output": "builds/{{user `box_basename`}}.{{.Provider}}.box",
+      "type": "vagrant"
+    }
+  ],
+  "provisioners": [
+    {
+      "destination": "/tmp/bento-metadata.json",
+      "source": "{{user `metadata`}}",
+      "type": "file"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir -p {{user `software_dir`}}",
+        "mkdir -p {{user `software_dir`}}/vagrant/scripts",
+        "mkdir -p {{user `software_dir`}}/linux/atg/11.2",
+        "mkdir -p {{user `software_dir`}}/linux/oracle",
+        "mkdir -p {{user `software_dir`}}/linux/java",
+        "mkdir -p {{user `software_dir`}}/linux/jboss",
+        "mkdir -p {{user `software_dir`}}/linux/endeca/MDEX",
+        "mkdir -p {{user `software_dir`}}/linux/endeca/CAS",
+        "mkdir -p {{user `software_dir`}}/linux/endeca/PlatformServices",
+        "mkdir -p {{user `software_dir`}}/linux/endeca/ToolsAndFrameworks",
+        "chmod -R 777 {{user `software_dir`}}",
+        "ls -la {{user `software_dir`}}/",
+        "sudo mkdir -p {{user `installation_dir`}}",
+        "sudo chown -R vagrant:vagrant {{user `installation_dir`}}"
+      ]
+    },
+    {
+      "destination": "{{user `software_dir`}}/vagrant/scripts/{{user `software_provisioning_scripts`}}",
+      "source": "{{user `software_scripts_dir`}}/{{user `software_provisioning_scripts`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/oracle/{{user `oracle_xe_installer`}}",
+      "source": "{{user `software_installer_dir`}}/oracle/{{user `oracle_xe_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/java/{{user `oracle_jdk_installer`}}",
+      "source": "{{user `software_installer_dir`}}/java/{{user `oracle_jdk_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/jboss/{{user `jboss_installer`}}",
+      "source": "{{user `software_installer_dir`}}/jboss/{{user `jboss_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/jboss/{{user `jboss_patch_1_installer`}}",
+      "source": "{{user `software_installer_dir`}}/jboss/{{user `jboss_patch_1_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/jboss/{{user `jboss_patch_2_installer`}}",
+      "source": "{{user `software_installer_dir`}}/jboss/{{user `jboss_patch_2_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/jboss/{{user `jboss_patch_3_installer`}}",
+      "source": "{{user `software_installer_dir`}}/jboss/{{user `jboss_patch_3_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/jboss/{{user `jboss_patch_4_installer`}}",
+      "source": "{{user `software_installer_dir`}}/jboss/{{user `jboss_patch_4_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_platform_installer`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_platform_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_csc_installer`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_csc_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_crs_installer`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_crs_installer`}}",
+      "type": "file"
+    },     
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_11.2_patch_1`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_11.2_patch_1`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2{{user `oc_11.2_csc_patch_1`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_11.2_csc_patch_1`}}",
+      "type": "file"
+    }, 
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_11.2_patch_2`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_11.2_patch_2`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_11.2_csc_patch_2`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_11.2_csc_patch_2`}}",
+      "type": "file"
+    },         
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_11.2_patch_2_fixpack_1`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_11.2_patch_2_fixpack_1`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/atg/11.2/{{user `oc_11.2_csc_patch_2_fixpack_1`}}",
+      "source": "{{user `software_installer_dir`}}/atg/11.2/{{user `oc_11.2_csc_patch_2_fixpack_1`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/endeca/MDEX/{{user `mdex_installer`}}",
+      "source": "{{user `software_installer_dir`}}/endeca/MDEX/{{user `mdex_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/endeca/PlatformServices/{{user `ps_installer`}}",
+      "source": "{{user `software_installer_dir`}}/endeca/PlatformServices/{{user `ps_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/endeca/ToolsAndFrameworks/{{user `taf_installer`}}",
+      "source": "{{user `software_installer_dir`}}/endeca/ToolsAndFrameworks/{{user `taf_installer`}}",
+      "type": "file"
+    },
+    {
+      "destination": "{{user `software_dir`}}/linux/endeca/CAS/{{user `cas_installer`}}",
+      "source": "{{user `software_installer_dir`}}/endeca/CAS/{{user `cas_installer`}}",
+      "type": "file"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}"
+      ],
+     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/common/metadata.sh",
+        "scripts/centos/networking.sh",
+        "scripts/common/sshd.sh",
+        "scripts/common/vagrant.sh",
+        "scripts/common/virtualbox.sh",
+        "scripts/common/vmware.sh",
+        "scripts/common/parallels.sh",
+        "scripts/common/custom.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}",
+        "INSTALL_USER=vagrant",
+        "INSTALL_DIR=/sde",
+        "SOFTWARE_DIR={{user `software_dir`}}",
+        "ORACLE_XE_INSTALLER={{user `oracle_xe_installer`}}",
+        "JDK_INSTALLER={{user `oracle_jdk_installer`}}",
+        "JBOSS_INSTALLER={{user `jboss_installer`}}",
+        "JBOSS_HOME=/sde/jboss/jboss-eap-6.4",
+        "APP_SERVER=jboss",
+        "ATG_VERSION=11.2",
+        "OC_INSTALLER={{user `oc_platform_installer`}}",
+        "OC_CSC_INSTALLER={{user `oc_csc_installer`}}",
+        "OC_CRS_INSTALLER={{user `oc_crs_installer`}}",
+        "MDEX_INSTALLER={{user `mdex_installer`}}",
+        "PS_INSTALLER={{user `ps_installer`}}",
+        "TAF_INSTALLER={{user `taf_installer`}}",
+        "CAS_INSTALLER={{user `cas_installer`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/common/install_oracle_xe.sh",
+        "scripts/common/install_jdk8.sh",
+        "scripts/common/install_jboss.sh",
+        "scripts/common/install_atg11.sh",
+        "scripts/common/install_atg11_csc.sh",
+        "scripts/common/install_atg11_crs.sh",
+        "scripts/common/install_endeca.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}",
+        "INSTALL_USER=vagrant",
+        "INSTALL_DIR=/sde",
+        "SOFTWARE_DIR={{user `software_dir`}}",
+        "ATG_VERSION=11.2",
+        "OC_PATCH={{user `oc_11.2_patch_1`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/common/install_atg11_patch.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}",
+        "INSTALL_USER=vagrant",
+        "INSTALL_DIR=/sde",
+        "SOFTWARE_DIR={{user `software_dir`}}",
+        "ATG_VERSION=11.2",
+        "OC_PATCH={{user `oc_11.2_csc_patch_1`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/common/install_atg11_patch.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}",
+        "INSTALL_USER=vagrant",
+        "INSTALL_DIR=/sde",
+        "SOFTWARE_DIR={{user `software_dir`}}",
+        "ATG_VERSION=11.2",
+        "OC_PATCH={{user `oc_11.2_patch_2`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/common/install_atg11_patch.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}",
+        "INSTALL_USER=vagrant",
+        "INSTALL_DIR=/sde",
+        "SOFTWARE_DIR={{user `software_dir`}}",
+        "ATG_VERSION=11.2",
+        "OC_PATCH={{user `oc_11.2_csc_patch_2`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/common/install_atg11_patch.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}",
+        "INSTALL_USER=vagrant",
+        "INSTALL_DIR=/sde",
+        "SOFTWARE_DIR={{user `software_dir`}}",
+        "ATG_VERSION=11.2",
+        "OC_PATCH={{user `oc_11.2_patch_2_fixpack_1`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/common/install_atg11_patch.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "rm -rf {{user `software_dir`}}"
+      ]
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/centos/cleanup.sh",
+        "scripts/common/minimize.sh"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "arch": "64",
+    "box_basename": "oracle-6.8",
+    "build_timestamp": "{{isotime \"20060102150405\"}}",
+    "cpus": "1",
+    "disk_size": "40960",
+    "git_revision": "__unknown_git_revision__",
+    "headless": "",
+    "http_proxy": "{{env `http_proxy`}}",
+    "https_proxy": "{{env `https_proxy`}}",
+    "iso_checksum": "2031e40090899d56986f3c6840da6515",
+    "iso_checksum_type": "md5",
+    "iso_name": "V138414-01-OL68_x86_64.iso",
+    "ks_path": "centos-6.8/ks.cfg",
+    "memory": "512",
+    "metadata": "floppy/dummy_metadata.json",
+    "mirror": "file://localhost",
+    "mirror_directory": "/usr/local/software-share/linux",
+    "name": "oracle-6.8",
+    "no_proxy": "{{env `no_proxy`}}",
+    "template": "oracle-6.8-x86_64",
+    "version": "0.1.0.TIMESTAMP",
+    
+    "software_dir": "/tmp/software",
+    "software_scripts_dir": "/usr/local/software-share/vagrant/scripts",
+    "software_installer_dir": "/usr/local/software-share/linux",
+    "software_provisioning_scripts": "VagrantProvisioningScripts-1.9.2.zip",
+    "installation_dir": "/sde",
+    "jboss_installer": "jboss-eap-6.4.0.zip",
+    "jboss_patch_1_installer": "jboss-eap-6.4.1.CP.zip",
+    "jboss_patch_2_installer": "jboss-eap-6.4.2.CP.zip",
+    "jboss_patch_3_installer": "jboss-eap-6.4.3.CP.zip",
+    "jboss_patch_4_installer": "jboss-eap-6.4.4.CP.zip",
+    "oracle_xe_installer": "oracle-xe-11.2.0-1.0.x86_64.rpm.zip",
+    "oracle_jdk_installer": "jdk-8u121-linux-x64.rpm",
+    "oc_platform_installer": "V78217-01-Oracle-Commerce-11.2-UNIX.zip",
+    "oc_csc_installer": "V78220-01-Oracle-Commerce-CSC-11.2-UNIX.zip",
+    "oc_crs_installer": "V78224-01-Oracle-Commerce-CRS-11.2-UNIX.zip",
+    "oc_11.2_patch_1": "p23147552_112000_Generic.zip",
+    "oc_11.2_csc_patch_1": "p23147539_112000_Generic.zip",
+    "oc_11.2_patch_2": "p24950065_112000_Generic.zip",
+    "oc_11.2_csc_patch_2": "p24950079_112000_Generic.zip",
+    "oc_11.2_patch_2_fixpack_1": "p25404313_112020_Generic.zip",
+    "mdex_installer": "V78211-01-Oracle-Commerce-MDEX-6.5.2-Linux.zip",
+    "ps_installer": "V78226-01-Oracle-Commerce-Guided-Search-Platform-Services-11.2-Linux.zip",
+    "taf_installer": "V78208-01-Oracle-Commerce-TAF-11.2-Linux.zip",
+    "cas_installer": "V78204-01-Oracle-Commerce-CAS-11.2-Linux.zip"
+  }
+}
+
