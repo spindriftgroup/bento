@@ -18,7 +18,7 @@ echo "USER_INSTALL_DIR=$target_dir" > $silent_file
 cat $silent_file
 
 #Install software
-unzip $SOFTWARE_DIR/linux/atg/11.2/$OC_CSC_INSTALLER
+unzip $SOFTWARE_DIR/linux/atg/$ATG_VERSION/$OC_CSC_INSTALLER
 chmod +x $oc_bin_file
 sudo -u $INSTALL_USER ./$oc_bin_file -f $silent_file -i silent
 

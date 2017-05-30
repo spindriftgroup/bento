@@ -25,5 +25,5 @@ done
 
 #Set JBOSS_HOME
 profile=$HOME_DIR/.bash_profile
-jboss_home=$INSTALL_DIR/jboss/jboss-eap-6.4
+jboss_home=$INSTALL_DIR/jboss/jboss-eap-$JBOSS_VERSION
 echo "export JBOSS_HOME=$jboss_home" >> $profile

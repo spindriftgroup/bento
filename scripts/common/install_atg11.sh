@@ -29,7 +29,7 @@ if [ ! -d $target_dir ]; then
   mkdir -p $target_dir
   chown -R $INSTALL_USER:$INSTALL_USER $target_dir
 fi
-unzip $SOFTWARE_DIR/linux/atg/11.2/$OC_INSTALLER
+unzip $SOFTWARE_DIR/linux/atg/$ATG_VERSION/$OC_INSTALLER
 chmod +x $oc_bin_file
 sudo -u $INSTALL_USER ./$oc_bin_file -f $silent_file -i silent
 

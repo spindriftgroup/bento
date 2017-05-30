@@ -3,8 +3,10 @@
 declare -A oc_patch_file_name
 oc_patch_file_name[p19145440_110000_Generic.zip]="OCPlatform11.0_p1"
 oc_patch_file_name[p19145462_110000_Generic.zip]="Service11.0_p1"
+
 oc_patch_file_name[p20173321_111000_Generic.zip]="OCPlatform11.1_p1"
 oc_patch_file_name[p20173342_111000_Generic.zip]="Service11.1_p1"
+
 oc_patch_file_name[p23147552_112000_Generic.zip]="OCPlatform11.2_p1"
 oc_patch_file_name[p23147539_112000_Generic.zip]="Service11.2_p1"
 oc_patch_file_name[p24950065_112000_Generic.zip]="OCPlatform11.2_p2"
